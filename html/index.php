@@ -1,51 +1,62 @@
 <?php
 session_start();
 
+function login($username, $password, $captcha){
+    $valid_user = 'juanita';
+    $valid_pass = 'ilovemyself';
+
+    if (!verifyCaptcha($captcha)){
+        $_SESSION['error'] = "Invalid captcha.";
+        return;
+    }
+
+    if ($username !== $valid_user){
+        $_SESSION['error'] = "Invalid username.";
+        generateCaptcha();
+        return;
+    }
+    
+    if ($password !== $valid_pass){
+        $_SESSION['error'] = "Invalid password.";
+        generateCaptcha();
+        return;
+    }
+    $_SESSION['logged_in'] = true;
+}
+
+function generateCaptcha(){
+    $_SESSION['captcha_num1'] = rand(1, 9);
+    $_SESSION['captcha_num2'] = rand(1, 9);
+}
+
+function verifyCaptcha($response){
+    $captcha_num1 = $_SESSION['captcha_num1'];
+    $captcha_num2 = $_SESSION['captcha_num2'];
+    $captcha_result = $captcha_num1 + $captcha_num2;
+
+    return $response == $captcha_result;
+}
+
 if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']) {
     header("Location: dashboard.php");
     exit();
 }
 
-if (!isset($_SESSION['login_attempts'])) {
-    $_SESSION['login_attempts'] = 0;
-}
 
 $username = $_POST['username'] ?? '';
 $password = $_POST['password'] ?? '';
 $captcha = $_POST['captcha'] ?? '';
-$logins_attempts = 3;
 
-$valid_user = 'abaldeiro';
-$valid_pass = 'password';
+if($username != '' and $password != ''){
 
-$_SESSION['login_attempts'] += 1;
+    login($username, $password, $captcha);
 
-if ($_SESSION['login_attempts'] > $logins_attempts) {
-    $captcha_num1 = $_SESSION['captcha_num1'];
-    $captcha_num2 = $_SESSION['captcha_num2'];
-    $captcha_result = $captcha_num1 + $captcha_num2;
-
-    if ($captcha != $captcha_result) {
-        $_SESSION['captcha_num1'] = rand(1, 9);
-        $_SESSION['captcha_num2'] = rand(1, 9);
-        
-        $_SESSION['error'] = "Invalid captcha.";
-    }
-}
-
-$_SESSION['captcha_num1'] = rand(1, 9);
-$_SESSION['captcha_num2'] = rand(1, 9);
-
-if ($username !== $valid_user){
-    $_SESSION['error'] = "Invalid username.";
-}elseif ($password !== $valid_pass){
-    $_SESSION['error'] = "Invalid password.";
 }else{
-    $_SESSION['logged_in'] = true;
-    $_SESSION['login_attempts'] = 0;
+    generateCaptcha();
 }
 
-$show_captcha = $_SESSION['login_attempts'] >= $logins_attempts;
+echo var_dump($_REQUEST);
+
 $hasAlert = isset($_SESSION['error']);
 ?>
 
@@ -71,10 +82,8 @@ $hasAlert = isset($_SESSION['error']);
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
 
-        <?php if ($show_captcha): ?>
-        <label for="captcha">Captcha: <?php echo $_SESSION['captcha_num1']; ?> + <?php echo $_SESSION['captcha_num2']; ?>?</label>
+        <label for="captcha">Captcha: <?php echo $_SESSION['captcha_num1']; ?> + <?php echo $_SESSION['captcha_num2']; ?> = ?</label>
         <input type="text" id="captcha" name="captcha" required>
-        <?php endif; ?>
 
         <button type="submit">Login</button>
     </form>
