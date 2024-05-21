@@ -1,27 +1,34 @@
 <?php
 session_start();
 
+$showCaptcha = false;
+
 function login($username, $password, $captcha){
     $valid_user = 'juanita';
     $valid_pass = 'ilovemyself';
 
     if (!verifyCaptcha($captcha)){
         $_SESSION['error'] = "Invalid captcha.";
-        return;
+        generateCaptcha();
+        return false;
     }
 
     if ($username !== $valid_user){
         $_SESSION['error'] = "Invalid username.";
         generateCaptcha();
-        return;
+        return false;
     }
     
     if ($password !== $valid_pass){
         $_SESSION['error'] = "Invalid password.";
         generateCaptcha();
-        return;
+        return false;
     }
+
     $_SESSION['logged_in'] = true;
+    $_SESSION['username'] = $username;
+
+    return true;
 }
 
 function generateCaptcha(){
@@ -30,6 +37,12 @@ function generateCaptcha(){
 }
 
 function verifyCaptcha($response){
+    global $showCaptcha;
+
+    if (!$showCaptcha){
+        return true;
+    }
+
     $captcha_num1 = $_SESSION['captcha_num1'];
     $captcha_num2 = $_SESSION['captcha_num2'];
     $captcha_result = $captcha_num1 + $captcha_num2;
@@ -49,13 +62,16 @@ $captcha = $_POST['captcha'] ?? '';
 
 if($username != '' and $password != ''){
 
-    login($username, $password, $captcha);
+    if(login($username, $password, $captcha)){
+        header("Location: dashboard.php");
+        exit();
+    };
 
 }else{
     generateCaptcha();
 }
 
-echo var_dump($_REQUEST);
+// echo var_dump($_REQUEST);
 
 $hasAlert = isset($_SESSION['error']);
 ?>
@@ -82,10 +98,12 @@ $hasAlert = isset($_SESSION['error']);
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
 
+        <?php if ($showCaptcha): ?>
         <label for="captcha">Captcha: <?php echo $_SESSION['captcha_num1']; ?> + <?php echo $_SESSION['captcha_num2']; ?> = ?</label>
         <input type="text" id="captcha" name="captcha" required>
+        <?php endif; ?>
 
-        <button type="submit">Login</button>
+        <button type="submit" class="btn-login">Login</button>
     </form>
 </body>
 </html>

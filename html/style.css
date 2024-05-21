@@ -19,7 +19,19 @@ input[type=text], input[type=password] {
     margin: 8px 0;
     display: inline-block;
     border: 1px solid #ccc;
+    border-radius: 20px;
     box-sizing: border-box;
+}
+
+.btn-login {
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    width: 100%;
 }
 
 h2, h3 {
@@ -50,4 +62,27 @@ th, td {
     text-align: center;
     border-radius: 15px;
     margin-bottom: 10px;
+}
+
+.sair {
+    float: right;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+}
+
+.btn-sair {
+    float: right;
+    padding: 10px;
+    background-color: #ff6c6c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.sair > form {
+    border: none;
+    margin: 0%;
+    padding: auto;
 }

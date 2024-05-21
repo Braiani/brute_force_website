@@ -12,6 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     file_put_contents('data/rankings.txt', "$name, $time\n", FILE_APPEND);
 }
 
+$username = $_SESSION['username'];
 $rankings = file('data/rankings.txt');
 ?>
 
@@ -23,7 +24,12 @@ $rankings = file('data/rankings.txt');
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h2>Welcome, you are logged in!</h2>
+    <div class="sair">
+        <form action="sair.php" method="get">
+            <button class="btn-sair" type="submit">Sair</button>
+        </form>
+    </div>
+    <h2>Welcome <?=$username?>, you are logged in!</h2>
     <form action="dashboard.php" method="post">
         <label for="name">Enter your name:</label>
         <input type="text" id="name" name="name" required>
