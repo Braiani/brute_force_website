@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-$showCaptcha = false;
+$showCaptcha = true;
 
 function login($username, $password, $captcha){
     $valid_user = 'juanita';
