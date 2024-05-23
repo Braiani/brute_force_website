@@ -4,8 +4,7 @@ session_start();
 $showCaptcha = true;
 
 function login($username, $password, $captcha){
-    $valid_user = 'juanita';
-    $valid_pass = 'ilovemyself';
+    require_once("login-info.php");
 
     if (!verifyCaptcha($captcha)){
         $_SESSION['error'] = "Invalid captcha.";
@@ -55,6 +54,9 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']) {
     exit();
 }
 
+if ($showCaptcha and !isset($_SESSION['captcha_num1']) and !isset($_SESSION['captcha_num2'])){
+    generateCaptcha();
+}
 
 $username = $_POST['username'] ?? '';
 $password = $_POST['password'] ?? '';

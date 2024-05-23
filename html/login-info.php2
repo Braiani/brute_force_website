@@ -1,0 +1,4 @@
+<?php
+
+$valid_user = 'elliott';
+$valid_pass = 'allsafe';
